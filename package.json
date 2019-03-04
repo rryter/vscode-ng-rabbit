@@ -2,7 +2,13 @@
     "name": "vscode-ng-rabbit",
     "displayName": "vscode-ng-rabbit",
     "description": "Speed up component creation",
-    "version": "0.0.1",
+    "publisher": "rryter",
+    "license": "SEE LICENSE IN LICENSE.md",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/rryter/vscode-ng-rabbit"
+    },
+    "version": "0.1.1",
     "engines": {
         "vscode": "^1.31.0"
     },
