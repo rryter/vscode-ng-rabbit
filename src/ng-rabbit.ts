@@ -4,7 +4,7 @@ import * as childProcess from 'child_process';
 const fs = require('fs');
 const fsPromises = fs.promises;
 
-export function ngRabbit() {
+export function extractComponent() {
     // The code you place here will be executed every time your command is executed
     let editor = <vscode.TextEditor>vscode.window.activeTextEditor;
     var selection = editor.selection;
@@ -14,13 +14,12 @@ export function ngRabbit() {
 
     if (!content) {
         vscode.window.showErrorMessage(
-            'Please select some HTML before using vscode-ng-rabbit.'
+            'ng-rabbit: Please select some HTML before performing the refactoring.'
         );
 
         return false;
     }
 
-    // Display a message box to the user
     vscode.window
         .showOpenDialog({
             openLabel: 'Select folder',
@@ -35,52 +34,47 @@ export function ngRabbit() {
                 }
 
                 selectedFolder = fileUri;
-
                 return vscode.window.showInputBox({
-                    prompt: 'Component Name',
+                    prompt: 'Select the home of your new component',
                     placeHolder: 'component-name'
                 });
             }
         )
-        .then(componentName => {
-            if (vscode.workspace.rootPath) {
-                const result = childProcess.exec(
-                    `ng g component ${componentName}`,
-                    {
-                        cwd: selectedFolder[0].fsPath
-                    }
-                );
+        .then((componentName: string) => {
+            const result = childProcess.exec(
+                `ng g component ${componentName}`,
+                {
+                    cwd: selectedFolder[0].fsPath
+                }
+            );
 
-                result.stdout.on('data', function(data) {
-                    console.log('stdout: ' + data);
+            result.stdout.on('data', function(data) {
+                const path = `${
+                    selectedFolder[0].fsPath
+                }/${componentName}/${componentName}.component.html`;
 
-                    const path = `${
-                        selectedFolder[0].fsPath
-                    }/${componentName}/${componentName}.component.html`;
-
-                    fsPromises
-                        .writeFile(path, content)
-                        .then(() => {
-                            return editor.edit(function(builder) {
-                                builder.replace(
-                                    selection,
-                                    `<app-${componentName}></app-${componentName}>`
-                                );
-                            });
-                        })
-                        .then(editor.document.save)
-                        .then(() => {
-                            return vscode.workspace.openTextDocument(path);
-                        })
-                        .then((doc: vscode.TextDocument) => {
-                            return vscode.window.showTextDocument(doc);
-                        })
-                        .then(() => {
-                            vscode.window.showInformationMessage(
-                                `Component ${componentName} successfully created.`
+                fsPromises
+                    .writeFile(path, content)
+                    .then(() => {
+                        return editor.edit(function(builder) {
+                            builder.replace(
+                                selection,
+                                `<app-${componentName}></app-${componentName}>`
                             );
                         });
-                });
-            }
+                    })
+                    .then(editor.document.save)
+                    .then(() => {
+                        return vscode.workspace.openTextDocument(path);
+                    })
+                    .then((doc: vscode.TextDocument) => {
+                        return vscode.window.showTextDocument(doc);
+                    })
+                    .then(() => {
+                        vscode.window.showInformationMessage(
+                            `ng-rabbit: Component ${componentName} successfully created.`
+                        );
+                    });
+            });
         });
 }
