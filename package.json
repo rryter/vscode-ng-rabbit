@@ -16,16 +16,47 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.ngRabbitHtmlToComponent"
+        "onCommand:extension.ngRabbitHtmlToComponent",
+        "onCommand:extension.ngRabbitInlineTemplate",
+        "onCommand:extension.ngRabbitInlineStyle"
     ],
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
                 "command": "extension.ngRabbitHtmlToComponent",
-                "title": "Refactor Component: Create component from selected HTML"
+                "title": "Angular Refactoring: Create component"
+            },
+            {
+                "command": "extension.ngRabbitInlineTemplate",
+                "title": "Angular Refactoring: Inline template"
+            },
+            {
+                "command": "extension.ngRabbitInlineStyle",
+                "title": "Angular Refactoring: Inline style"
             }
-        ]
+        ],
+        "menus": {
+            "explorer/context": [
+                {
+                    "when": "resourceLangId == typescript",
+                    "command": "extension.ngRabbitHtmlToComponent",
+                    "group": "YourGroup@1"
+                }
+            ],
+            "editor/context": [
+                {
+                    "when": "resourceLangId == html && editorHasSelection",
+                    "command": "extension.ngRabbitHtmlToComponent",
+                    "group": "ngRabbit@1"
+                },
+                {
+                    "when": "resourceLangId == html",
+                    "command": "extension.ngRabbitInlineTemplate",
+                    "group": "ngRabbit@2"
+                }
+            ]
+        }
     },
     "scripts": {
         "vscode:prepublish": "yarn run compile",
