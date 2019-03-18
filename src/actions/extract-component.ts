@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as childProcess from 'child_process';
+import * as path from 'path';
 
 const fs = require('fs');
 const fsPromises = fs.promises;
@@ -10,6 +11,7 @@ export function extractComponent() {
     var selection = editor.selection;
     let content = editor.document.getText(selection);
 
+    let currentFolderPath = path.dirname(editor.document.uri.path)
     let selectedFolder: vscode.Uri[];
 
     if (!content) {
@@ -22,6 +24,7 @@ export function extractComponent() {
 
     vscode.window
         .showOpenDialog({
+            defaultUri: vscode.Uri.file(currentFolderPath),
             openLabel: 'Select folder',
             canSelectFiles: false,
             canSelectFolders: true
